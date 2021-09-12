@@ -59,6 +59,10 @@ kind: Ingress
 metadata:
   name: name-virtual-host-ingress
 spec:
+  tls:
+  - hosts:
+    - rak.dev
+    secretName: aks-ingress-tls
   rules:
   - host: rak.dev
     http:

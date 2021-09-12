@@ -3,3 +3,10 @@ kubectl -n kubernetes-dashboard get secret $(kubectl -n kubernetes-dashboard get
 
 Dashboard:
 http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+
+
+
+kubectl create secret tls aks-ingress-tls \
+    --namespace default \
+    --key rak-tls.key \            
+    --cert rak-tls.crt 
