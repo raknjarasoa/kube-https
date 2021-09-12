@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-kube-front-https
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: demo-kube-front-https
+  template:
+    metadata:
+      labels:
+        app: demo-kube-front-https
+    spec:
+      containers:
+      - name: demo-kube-front-https
+        image: demo2:1.0
+        ports:
+        - containerPort: 80
+        # resources:
+        #   requests:
+        #     cpu: 250Mi
+        #   limits:
+        #     cpu: 500Mi
+        #     memory: 200Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-kube-front-https
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: demo-kube-front-https
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kubernetes-dashboard
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: admin-user
+  namespace: kubernetes-dashboard
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: name-virtual-host-ingress
+spec:
+  rules:
+  - host: rak.dev
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: demo-kube-front-https
+            port:
+              number: 80
